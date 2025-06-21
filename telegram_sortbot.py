@@ -210,8 +210,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif mode == "mode_expand":
         result = expand_ids_from_text(text)
 
-else:
-    result = "⚠️ Modo desconhecido. Tente /start novamente."
+    else:
+        result = "⚠️ Modo desconhecido. Tente /start novamente."
 
     await update.message.reply_text(result)
     await update.message.reply_text("🔽 Quando quiser mudar:", reply_markup=get_back_button())
