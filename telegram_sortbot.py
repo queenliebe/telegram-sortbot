@@ -189,7 +189,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if mode == "mode_sort":
-    result = extract_sorted_numbers(text)
+        result = extract_sorted_numbers(text)    
 
 elif mode == "mode_filter":
     result = filter_multiple_units(text)
