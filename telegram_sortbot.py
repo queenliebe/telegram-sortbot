@@ -189,29 +189,29 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
 
     if mode == "mode_sort":
-        result = extract_sorted_numbers(text)
+    result = extract_sorted_numbers(text)
 
-    elif mode == "mode_filter":
-        result = filter_multiple_units(text)
+elif mode == "mode_filter":
+    result = filter_multiple_units(text)
 
-    elif mode == "mode_compare":
-        pending = context.user_data.get("pending_list", [])
-        pending.append(text)
-        context.user_data["pending_list"] = pending
+elif mode == "mode_compare":
+    pending = context.user_data.get("pending_list", [])
+    pending.append(text)
+    context.user_data["pending_list"] = pending
 
-        if len(pending) < 2:
-            await update.message.reply_text("✅ Lista 1 recebida. Agora envie a segunda lista.")
-            return
-        else:
-            matches = compare_lists_pairwise(pending[0], pending[1])
-            result = "🎯 Itens em comum:\n" + '\n'.join(matches) if matches else "Nenhum item em comum encontrado."
-            context.user_data["pending_list"] = []
-
+    if len(pending) < 2:
+        await update.message.reply_text("✅ Lista 1 recebida. Agora envie a segunda lista.")
+        return
     else:
-        result = "⚠️ Modo desconhecido. Tente /start novamente."
+        matches = compare_lists_pairwise(pending[0], pending[1])
+        result = "📋 Itens em comum:\n" + '\n'.join(matches) if matches else "Nenhum item em comum encontrado."
+        context.user_data["pending_list"] = []
 
-    elif mode == "mode_expand":
+elif mode == "mode_expand":
     result = expand_ids_from_text(text)
+
+else:
+    result = "⚠️ Modo desconhecido. Tente /start novamente."
 
     await update.message.reply_text(result)
     await update.message.reply_text("🔽 Quando quiser mudar:", reply_markup=get_back_button())
