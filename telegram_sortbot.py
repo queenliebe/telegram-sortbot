@@ -58,6 +58,24 @@ def filter_multiple_units(text):
     ]
     return '\n'.join(filtered) if filtered else "Nenhum item com mais de 1 unidade encontrado."
 
+def expand_ids_from_text(text):
+    results = []
+
+    for line in text.strip().splitlines():
+        match = re.search(r"\b(\d{5})\b", line)
+        if not match:
+            continue
+
+        code = match.group(1)
+
+        # Check for quantity like (4x)
+        qty_match = re.search(r"\((\d+)x\)", line)
+        qty = int(qty_match.group(1)) if qty_match else 1
+
+        results.extend([code] * qty)
+
+    return " ".join(results)
+
 # ---------- UI ----------
 
 def get_main_menu():
@@ -105,6 +123,10 @@ async def set_compare_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 async def set_filter_mode(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await set_mode(update, context, "mode_filter", "banner_filter.jpg", "Modo definido: 🗑️ Remover 1x.\nEnvie os cards para filtrar.")
+
+async def expand(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    context.user_data["mode"] = "mode_expand"
+    await update.message.reply_text("✅ Modo Expandir ativado. Envie a lista com quantidades agora.")
 
 # ---------- Button Handler ----------
 
@@ -188,6 +210,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     else:
         result = "⚠️ Modo desconhecido. Tente /start novamente."
 
+    elif mode == "mode_expand":
+    result = expand_ids_from_text(text)
+
     await update.message.reply_text(result)
     await update.message.reply_text("🔽 Quando quiser mudar:", reply_markup=get_back_button())
 
@@ -206,6 +231,7 @@ if __name__ == "__main__":
     app.add_handler(CommandHandler("ordenar", set_sort_mode))
     app.add_handler(CommandHandler("comparar", set_compare_mode))
     app.add_handler(CommandHandler("remover", set_filter_mode))
+    app.add_handler(CommandHandler("expand", expand))
     app.add_handler(CallbackQueryHandler(handle_button))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
