@@ -191,10 +191,10 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if mode == "mode_sort":
         result = extract_sorted_numbers(text)    
 
-elif mode == "mode_filter":
-    result = filter_multiple_units(text)
+    elif mode == "mode_filter":
+        result = filter_multiple_units(text)
 
-elif mode == "mode_compare":
+    elif mode == "mode_compare":
     pending = context.user_data.get("pending_list", [])
     pending.append(text)
     context.user_data["pending_list"] = pending
@@ -207,8 +207,8 @@ elif mode == "mode_compare":
         result = "📋 Itens em comum:\n" + '\n'.join(matches) if matches else "Nenhum item em comum encontrado."
         context.user_data["pending_list"] = []
 
-elif mode == "mode_expand":
-    result = expand_ids_from_text(text)
+    elif mode == "mode_expand":
+        result = expand_ids_from_text(text)
 
 else:
     result = "⚠️ Modo desconhecido. Tente /start novamente."
