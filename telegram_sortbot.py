@@ -209,7 +209,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     elif mode == "mode_expand":
         result = expand_ids_from_text(text)
-
     else:
         result = "⚠️ Modo desconhecido. Tente /start novamente."
 
