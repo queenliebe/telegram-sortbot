@@ -11,6 +11,14 @@ from telegram.ext import (
     filters,
 )
 
+def extract_ids(text):
+    ids = set()
+    for line in text.splitlines():
+        match = re.search(r"\b(\d{5})\b", line)
+        if match:
+            ids.add(match.group(1))
+    return ids
+
 # --- Logging ---
 logging.basicConfig(
     format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", level=logging.INFO
@@ -126,10 +134,26 @@ async def handle_button(update: Update, context: ContextTypes.DEFAULT_TYPE):
 def compare_lists_pairwise(list1_raw, list2_raw):
     list1_lines = [line.strip() for line in list1_raw.strip().split('\n') if line.strip()]
     list2_lines = [line.strip() for line in list2_raw.strip().split('\n') if line.strip()]
-    list1_map = {extract_name_only(line): clean_display_line(line) for line in list1_lines}
-    list2_map = {extract_name_only(line): clean_display_line(line) for line in list2_lines}
-    common_keys = sorted(set(list1_map) & set(list2_map))
-    results = [list1_map.get(k) or list2_map.get(k) for k in common_keys]
+
+    # Build maps from ID to line
+    list1_map = {}
+    list2_map = {}
+
+    for line in list1_lines:
+        match = re.search(r'\b(\d{5})\b', line)
+        if match:
+            list1_map[match.group(1)] = line.strip()
+
+    for line in list2_lines:
+        match = re.search(r'\b(\d{5})\b', line)
+        if match:
+            list2_map[match.group(1)] = line.strip()
+
+    # Find common IDs
+    common_ids = sorted(set(list1_map.keys()) & set(list2_map.keys()))
+
+    # Return matching lines from list1
+    results = [list1_map[id] for id in common_ids]
     return results if results else None
 
 # ---------- Message Handler ----------
