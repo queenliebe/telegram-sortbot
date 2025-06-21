@@ -195,9 +195,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         result = filter_multiple_units(text)
 
     elif mode == "mode_compare":
-    pending = context.user_data.get("pending_list", [])
-    pending.append(text)
-    context.user_data["pending_list"] = pending
+        pending = context.user_data.get("pending_list", [])
+        pending.append(text)
+        context.user_data["pending_list"] = pending
 
     if len(pending) < 2:
         await update.message.reply_text("✅ Lista 1 recebida. Agora envie a segunda lista.")
